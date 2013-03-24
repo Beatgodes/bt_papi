@@ -6,23 +6,20 @@
 
 #define SHOW_VAL // show counter values
 
-#define IT 1 // numero de iterações a executar
-#define CLOCK_MHZ 2670 // frequencia em MHz
-#define NUM_EVENTS 4 // numero de contadores
-#define MEM_LINESIZE 64 // last level cache line size in bytes
+
 
 #define ERROR_RETURN(retval) { fprintf(stderr, "Error %d %s:line %d: \n", retval,__FILE__,__LINE__);  exit(retval); }                              
 
-int EventSet;
-long long values[IT][NUM_EVENTS];
-// declara contadores
 
+/*
 int counters[NUM_EVENTS] = {
                                 PAPI_L3_LDM,
                                 PAPI_LD_INS,
                                 PAPI_L1_LDM,
                                 PAPI_L2_LDM
                             };
+*/
+
 
 
 
@@ -60,7 +57,7 @@ void cpi(int i){
 }
 */
 
-
+/*
 float l1ms[IT];
 void l1miss(int i){
     l1ms[i] =  100*(float)(values[i][2])/(float)(values[i][1]);
@@ -78,14 +75,4 @@ void l3miss(int i){
     l3ms[i] = 100*(float)(values[i][0])/(float)(values[i][3]);
     printf("L3Miss IT %d: %f\n", i, l3ms[i]);
 }
-
-
-#define NUM_FUNC 3 // numero de funções de postprocessing
-
-// associar as funções no array
-void (*cmd[NUM_FUNC])(int i) = {
-									l1miss,
-									l2miss,
-									l3miss
-								};
-
+*/
