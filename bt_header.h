@@ -7,3 +7,4 @@ extern void bt_papi_init(int mem_linesize, int it, float clock_mhz);
 extern void bt_papi_add_named_event(int event);
 extern void bt_create_events();
 extern void bt_papi_shutdown();
+extern void bt_papi_add_function(void (*cmd)(int i));

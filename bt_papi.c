@@ -13,7 +13,7 @@ extern void bt_papi_shutdown();
 
 #define ERROR_RETURN(retval) { fprintf(stderr, "Error %d %s:line %d: \n", retval,__FILE__,__LINE__); bt_papi_dump(); exit(retval); }   
 
-#define SHOW_VAL
+#define EVERYTHING
 
 typedef struct s_bt_papi_data{
 	//char *event;
@@ -37,6 +37,13 @@ typedef struct s_bt_papi_system{
 
 bt_papi_system *bt_sys;
 
+void bt_papi_add_function(void (*cmd)(int i)){
+	int i = bt_sys->num_func;
+	bt_sys->num_func++;
+
+	bt_sys->cmd = (void (**) (int)) realloc(bt_sys->cmd, sizeof(void (*) (int)) * bt_sys->num_func);
+	bt_sys->cmd[i] = cmd;
+}
 
 long long bt_papi_get_value_it_named_event(const char *event, int it){
 	int code;

@@ -31,17 +31,26 @@ float randomFloat()
 	return r;
 }
 
+void test1(int a){
+	printf("im here %d\n", a);
+}
 
+void test2(int a){
+	printf("im also here %d\n", a);
+}
 
 int main(){
 	int i = 0, j = 0;
 	int seed = time(NULL);
 	srand(seed);
 
-	bt_papi_init(64, 1, 2670);
+	bt_papi_init(64, 5, 2670);
 	bt_papi_add_named_event(PAPI_TOT_CYC);
 	bt_papi_add_named_event(PAPI_VEC_SP);
 	bt_create_events();
+
+	bt_papi_add_function(test1);
+	bt_papi_add_function(test2);
 
 	// set up matrix açoreano style
 /*	float (*a)[SIZE] = (float (*)[SIZE])malloc(sizeof *a * SIZE);
@@ -60,9 +69,9 @@ int main(){
 		}
 	}
 */
-			bt_papi_n_start();
+	//		bt_papi_n_start();
 //			mul_matrix(a,b,c);
-			bt_papi_n_stop();
+	//		bt_papi_n_stop();
 	bt_papi_postprocess();
 /*
 	free(a);
