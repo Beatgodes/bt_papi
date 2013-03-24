@@ -1,4 +1,4 @@
-#define EVERYTHING // calculates all iterations
+//#define EVERYTHING // calculates all iterations
 
 //best time is currently bugged.
 // como vamos apenas correr uma iteração, acho que não interessa estar a corrigir/usar isto
@@ -8,7 +8,6 @@
 
 
 
-#define ERROR_RETURN(retval) { fprintf(stderr, "Error %d %s:line %d: \n", retval,__FILE__,__LINE__);  exit(retval); }                              
 
 
 /*

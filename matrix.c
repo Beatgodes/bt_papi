@@ -4,9 +4,11 @@
 #include <unistd.h>
 #include <time.h>
 
+#include <papi.h>
 #include <bt_header.h>
 
 #define SIZE 32
+
 
 void print_matrix(float (*a)[SIZE], size_t size);
 
@@ -38,11 +40,15 @@ int main(){
 	int seed = time(NULL);
 	srand(seed);
 
+	bt_papi_init(64, 1, 2670);
+	bt_papi_add_named_event(PAPI_TOT_CYC);
+	bt_create_events();
+
 	// set up matrix açoreano style
-	float (*a)[SIZE] = malloc(sizeof *a * SIZE);
-	float (*b)[SIZE] = malloc(sizeof *b * SIZE);
-	float (*c)[SIZE] = malloc(sizeof *c * SIZE);
-	float (*d)[SIZE] = malloc(sizeof *d * SIZE);
+	float (*a)[SIZE] = (float (*)[SIZE])malloc(sizeof *a * SIZE);
+	float (*b)[SIZE] = (float (*)[SIZE])malloc(sizeof *b * SIZE);
+	float (*c)[SIZE] = (float (*)[SIZE])malloc(sizeof *c * SIZE);
+	float (*d)[SIZE] = (float (*)[SIZE])malloc(sizeof *d * SIZE);
 
 	for(i = 0; i < SIZE; i++){
 		for(j = 0; j < SIZE; j++){
