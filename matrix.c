@@ -5,14 +5,9 @@
 #include <time.h>
 
 #include <papi.h>
+#include <bt_header.h>
 
-
-#include "/home/cpd22840/include/bt_header.h"
-
-#define SIZE 256
-
-
-void print_matrix(float (*a)[SIZE], size_t size);
+#define SIZE 32
 
 
 void mul_matrix(float (* __restrict__ a)[SIZE], float (* __restrict__ b)[SIZE], float (* __restrict__ c)[SIZE]){
@@ -49,10 +44,12 @@ int main(){
 	bt_create_events();
 
 	// set up matrix açoreano style
-	float (*a)[SIZE] = (float (*)[SIZE])malloc(sizeof *a * SIZE);
+/*	float (*a)[SIZE] = (float (*)[SIZE])malloc(sizeof *a * SIZE);
 	float (*b)[SIZE] = (float (*)[SIZE])malloc(sizeof *b * SIZE);
 	float (*c)[SIZE] = (float (*)[SIZE])malloc(sizeof *c * SIZE);
 	float (*d)[SIZE] = (float (*)[SIZE])malloc(sizeof *d * SIZE);
+
+
 
 	for(i = 0; i < SIZE; i++){
 		for(j = 0; j < SIZE; j++){
@@ -62,11 +59,17 @@ int main(){
 			d[i][j] = 0;			
 		}
 	}
-
+*/
 			bt_papi_n_start();
-			mul_matrix(a,b,c);
+//			mul_matrix(a,b,c);
 			bt_papi_n_stop();
 	bt_papi_postprocess();
+/*
+	free(a);
+	free(b);
+	free(c);
+	free(d);
+*/
 	return 0;
 }
 

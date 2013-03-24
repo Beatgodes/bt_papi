@@ -8,6 +8,9 @@
 
 #include <string.h>
 
+extern void bt_papi_dump();
+extern void bt_papi_shutdown();
+
 #define ERROR_RETURN(retval) { fprintf(stderr, "Error %d %s:line %d: \n", retval,__FILE__,__LINE__); bt_papi_dump(); exit(retval); }   
 
 #define SHOW_VAL
@@ -33,31 +36,6 @@ typedef struct s_bt_papi_system{
 } bt_papi_system;
 
 bt_papi_system *bt_sys;
-
-void bt_papi_dump(){
-	printf("data pointer: %p\n", bt_sys->data);
-	printf("counters pointer: %p\n", bt_sys->counters);
-	printf("mem_linesize: %d\n", bt_sys->mem_linesize);
-	printf("num_events: %d\n", bt_sys->num_events);
-	printf("eventset: %d\n", bt_sys->EventSet);
-	printf("it: %d\n", bt_sys->it);
-	printf("clock mhz: %f\n", bt_sys->clock_mhz);
-	printf("best: %d\n", bt_sys->best);
-	printf("num_func: %d\n", bt_sys->num_func);
-	printf("cmd pointer %p\n", bt_sys->cmd);
-
-	printf("DATA content\n");
-	int i = 0;
-	for(i = 0; i < bt_sys->num_events; i++){
-		printf("%d event %d | %s\n", i, bt_sys->data[i].event, bt_sys->data[i].str);
-	}
-
-	printf("COUNTERS content\n");
-	for(i = 0; i < bt_sys->num_events; i++){
-		printf("%d : %d\n", i, bt_sys->counters[i]);
-	}
-
-}
 
 
 long long bt_papi_get_value_it_named_event(const char *event, int it){
@@ -93,8 +71,8 @@ long long* bt_papi_get_value_all_named_event(const char *event){
 
 void bt_papi_add_named_event(/*const char **/ int event){
 	int i = bt_sys->num_events;
-	bt_sys->num_events++;
-	int code;
+	(bt_sys->num_events)++;
+	//int code;
 	int retval;
 /*
 	if((retval = PAPI_event_name_to_code((char*)event, &code)) != PAPI_OK)
@@ -105,9 +83,9 @@ void bt_papi_add_named_event(/*const char **/ int event){
 	if((retval = PAPI_get_event_info(event,&info)) != PAPI_OK)
 		ERROR_RETURN(retval);
 
-	printf("adding %s\n", info.symbol);
+	//printf("adding %s at %d\n", info.symbol, i);
 
-	bt_sys->data = (bt_papi_data*)realloc(bt_sys->data, sizeof(bt_papi_data) * i);
+	bt_sys->data = (bt_papi_data*)realloc(bt_sys->data, sizeof(bt_papi_data) * bt_sys->num_events);
 	bt_sys->data[i].event = event; //code;
 	bt_sys->data[i].values = (long long*)malloc(sizeof(long long) * bt_sys->it);
 	bt_sys->data[i].str = strdup(info.symbol); /*strdup(event);*/
@@ -276,7 +254,7 @@ void bt_papi_n_stop(){
     if( (retval = PAPI_remove_events(bt_sys->EventSet, bt_sys->counters, bt_sys->num_events)) != PAPI_OK)
       ERROR_RETURN(retval);
 
-    PAPI_shutdown();
+    //PAPI_shutdown();
 	int i = 0;
 	for(i = 0; i < bt_sys->num_events; i++){
 		bt_sys->data[i].values[0] += vals[i];
@@ -284,6 +262,45 @@ void bt_papi_n_stop(){
 	}
 }
 
+void bt_papi_shutdown(){
+	//printf("Shutting down system...\n");
+	PAPI_shutdown();
+	int i = 0;
+	for(i = 0; i < bt_sys->num_events; i++){
+		free(bt_sys->data[i].values);
+		free(bt_sys->data[i].str);
+	}
+	//free(bt_sys->data);
+	free(bt_sys->counters);
+	free(bt_sys->cmd);
+	free(bt_sys);
+}
 
+void bt_papi_dump(){
+	printf("data pointer: %p\n", bt_sys->data);
+	printf("counters pointer: %p\n", bt_sys->counters);
+	printf("mem_linesize: %d\n", bt_sys->mem_linesize);
+	printf("num_events: %d\n", bt_sys->num_events);
+	printf("eventset: %d\n", bt_sys->EventSet);
+	printf("it: %d\n", bt_sys->it);
+	printf("clock mhz: %f\n", bt_sys->clock_mhz);
+	printf("best: %d\n", bt_sys->best);
+	printf("num_func: %d\n", bt_sys->num_func);
+	printf("cmd pointer %p\n", bt_sys->cmd);
+
+	printf("DATA content\n");
+	int i = 0;
+	for(i = 0; i < bt_sys->num_events; i++){
+		printf("%d event %d | %s\n", i, bt_sys->data[i].event, bt_sys->data[i].str);
+	}
+
+	printf("COUNTERS content\n");
+	for(i = 0; i < bt_sys->num_events; i++){
+		printf("%d : %d\n", i, bt_sys->counters[i]);
+	}
+
+	bt_papi_shutdown();
+
+}
 
 
