@@ -1,12 +1,20 @@
+#PREFIX=/usr/local
+PREFIX=/home/cpd22840
+CC=gcc
+
+#for ie.grid.prociv.pt
+EXTRA=-L/opt/papi/lib -I/opt/papi/include
+
 mac : bt_papi.c bt_profile.h bt_header.h
-	g++ -fPIC -shared -lpapi bt_papi.c -o libbtpapi.dylib -Wall -Wextra -g
+	$(CC) -fPIC -shared -lpapi bt_papi.c -o libbtpapi.dylib -Wall -Wextra -g
 
 unix : bt_papi.c bt_profile.h bt_header.h
-	g++ -fPIC -shared -lpapi bt_papi.c -o libbtpapi.so -Wall -Wextra -g
+	$(CC) -fPIC -shared -lpapi bt_papi.c -o libbtpapi.so -Wall -Wextra -g $(EXTRA)
 
 matrix : matrix.c
-	g++ matrix.c -lpapi -lbtpapi -g
+	$(CC) matrix.c -lpapi -lbtpapi -O3 -L$(PREFIX)/lib -I$(PREFIX)/include $(EXTRA)
 
 install : libbtpapi.so bt_header.h
-	cp libbtpapi.dylib /usr/local/lib
-	cp bt_header.h /usr/local/include
+	if [ -e libbtpapi.dylib ]; then cp libbtpapi.dylib $(PREFIX)/lib ; fi;
+	if [ -e libbtpapi.so ]; then cp libbtpapi.so $(PREFIX)/lib; fi;
+	cp bt_header.h $(PREFIX)/include

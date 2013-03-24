@@ -1,7 +1,11 @@
 #include <papi.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <malloc/malloc.h>
+
+#ifdef __APPLE_
+	#include <malloc/malloc.h>
+#endif
+
 #include <string.h>
 
 #define ERROR_RETURN(retval) { fprintf(stderr, "Error %d %s:line %d: \n", retval,__FILE__,__LINE__); bt_papi_dump(); exit(retval); }   
@@ -43,12 +47,13 @@ void bt_papi_dump(){
 	printf("cmd pointer %p\n", bt_sys->cmd);
 
 	printf("DATA content\n");
-	for(int i = 0; i < bt_sys->num_events; i++){
+	int i = 0;
+	for(i = 0; i < bt_sys->num_events; i++){
 		printf("%d event %d | %s\n", i, bt_sys->data[i].event, bt_sys->data[i].str);
 	}
 
 	printf("COUNTERS content\n");
-	for(int i = 0; i < bt_sys->num_events; i++){
+	for(i = 0; i < bt_sys->num_events; i++){
 		printf("%d : %d\n", i, bt_sys->counters[i]);
 	}
 
@@ -62,7 +67,8 @@ long long bt_papi_get_value_it_named_event(const char *event, int it){
 	if((retval = PAPI_event_name_to_code((char*)event, &code)) != PAPI_OK)
 		ERROR_RETURN(retval);
 
-	for (int i = 0; i < bt_sys->num_events; ++i){
+	int i = 0;
+	for (i = 0; i < bt_sys->num_events; ++i){
 		//if(!strcmp(bt_sys->data[i]->event, event)) return bt_sys->data[i]->values[it];
 		if(code == bt_sys->data[i].event) return bt_sys->data[i].values[it];
 	}
@@ -75,7 +81,9 @@ long long* bt_papi_get_value_all_named_event(const char *event){
 
 	if((retval = PAPI_event_name_to_code((char*)event, &code)) != PAPI_OK)
 		ERROR_RETURN(retval);
-	for (int i = 0; i < bt_sys->num_events; ++i){
+
+	int i = 0;
+	for (i = 0; i < bt_sys->num_events; ++i){
 		//if(!strcmp(bt_sys->data[i]->event, event)) return bt_sys->data[i]->values;
 		if(code == bt_sys->data[i].event) return bt_sys->data[i].values;
 
@@ -100,11 +108,12 @@ void bt_papi_add_named_event(/*const char **/ int event){
 	printf("adding %s\n", info.symbol);
 
 	bt_sys->data = (bt_papi_data*)realloc(bt_sys->data, sizeof(bt_papi_data) * i);
-	bt_sys->data[i].event = code;
+	bt_sys->data[i].event = event; //code;
 	bt_sys->data[i].values = (long long*)malloc(sizeof(long long) * bt_sys->it);
 	bt_sys->data[i].str = strdup(info.symbol); /*strdup(event);*/
 
-	for(int j = 0; j < bt_sys->it; j++){
+	int j = 0;
+	for(j = 0; j < bt_sys->it; j++){
 		bt_sys->data[i].values[j] = 0;
 	}
 }
@@ -206,7 +215,8 @@ void bt_papi_postprocess(){
 
 void bt_create_events(){
 	bt_sys->counters = (int*)malloc(sizeof(int) * bt_sys->num_events);
-	for(int i = 0; i < bt_sys->num_events; i++){
+	int i = 0;
+	for(i = 0; i < bt_sys->num_events; i++){
 		bt_sys->counters[i] = bt_sys->data[i].event;
 	}
 }

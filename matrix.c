@@ -5,9 +5,11 @@
 #include <time.h>
 
 #include <papi.h>
-#include <bt_header.h>
 
-#define SIZE 32
+
+#include "/home/cpd22840/include/bt_header.h"
+
+#define SIZE 256
 
 
 void print_matrix(float (*a)[SIZE], size_t size);
@@ -35,6 +37,7 @@ float randomFloat()
 }
 
 
+
 int main(){
 	int i = 0, j = 0;
 	int seed = time(NULL);
@@ -42,6 +45,7 @@ int main(){
 
 	bt_papi_init(64, 1, 2670);
 	bt_papi_add_named_event(PAPI_TOT_CYC);
+	bt_papi_add_named_event(PAPI_VEC_SP);
 	bt_create_events();
 
 	// set up matrix açoreano style
